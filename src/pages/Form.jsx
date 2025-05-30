@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Message Component
 const Message = ({ text, isUser, options, animationDelay = 0 }) => {
@@ -15,45 +16,28 @@ const Message = ({ text, isUser, options, animationDelay = 0 }) => {
   const systemMessageClasses = "mr-auto bg-gray-700 text-white";
 
   return (
-    <>
-      <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
-        <div className="flex items-center">
-          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-            <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
-          </div>
-          <span className="font-semibold text-xl">NextStep</span>
-        </div>
-        <button
-          className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-          onClick={() => navigate('/')}
-        >
-          Voltar
-        </button>
-      </header>
-
-      <div
-        className={`
+    <div
+      className={`
         transition-all duration-300 ease-out transform
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
         ${isUser ? 'flex justify-end' : 'flex justify-start'}
         mb-4
       `}
-      >
-        <div
-          className={`
+    >
+      <div
+        className={`
           rounded-xl px-4 py-3 max-w-xs shadow-md
           ${isUser ? userMessageClasses : systemMessageClasses}
         `}
-        >
-          <p>{text}</p>
-          {options && !isUser && (
-            <div className="text-sm opacity-70 mt-2">
-              <p>Options: {options.map(opt => opt.label).join(', ')}</p>
-            </div>
-          )}
-        </div>
+      >
+        <p>{text}</p>
+        {options && !isUser && (
+          <div className="text-sm opacity-70 mt-2">
+            <p>Options: {options.map(opt => opt.label).join(', ')}</p>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
@@ -140,6 +124,7 @@ const ChatForm = ({ questions, onComplete }) => {
   const [isComplete, setIsComplete] = useState(false);
 
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   // Display the first question when the component mounts
   useEffect(() => {
@@ -230,48 +215,66 @@ const ChatForm = ({ questions, onComplete }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-900 text-white rounded-lg overflow-hidden">
-      <div className="p-4 border-b border-gray-700">
-        <h2 className="text-xl font-medium">Chat Form</h2>
-      </div>
 
-      <div className="flex-grow p-4 overflow-y-auto">
-        <div className="flex flex-col space-y-2">
-          {messages.map((message, index) => (
-            <Message
-              key={message.id}
-              text={message.text}
-              isUser={message.isUser}
-              options={message.options}
-              animationDelay={200 * index}
+    <>
+      <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
+        <div className="flex items-center">
+          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
+            <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
+          </div>
+          <span className="font-semibold text-xl">NextStep</span>
+        </div>
+        <button
+          className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+          onClick={() => navigate('/')}
+        >
+          Voltar
+        </button>
+      </header>
+
+      <div className="flex flex-col h-full bg-gray-900 text-white rounded-lg overflow-hidden">
+        <div className="p-4 border-b border-gray-700">
+          <h2 className="text-xl font-medium">Chat Form</h2>
+        </div>
+
+        <div className="flex-grow p-4 overflow-y-auto">
+          <div className="flex flex-col space-y-2">
+            {messages.map((message, index) => (
+              <Message
+                key={message.id}
+                text={message.text}
+                isUser={message.isUser}
+                options={message.options}
+                animationDelay={200 * index}
+              />
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        <div className="p-4 border-t border-gray-700">
+          {!isComplete && currentQuestionIndex < questions.length && (
+            <QuestionInput
+              type={questions[currentQuestionIndex]?.type || 'text'}
+              options={questions[currentQuestionIndex]?.options}
+              onSubmit={handleSubmit}
+              isActive={!isComplete}
             />
-          ))}
-          <div ref={messagesEndRef} />
+          )}
+          {isComplete && (
+            <div className="text-center p-4">
+              <p className="text-green-400 mb-2">Thank you for your responses!</p>
+              <button
+                onClick={resetForm}
+                className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition-colors duration-200"
+              >
+                Start Over
+              </button>
+            </div>
+          )}
         </div>
       </div>
-
-      <div className="p-4 border-t border-gray-700">
-        {!isComplete && currentQuestionIndex < questions.length && (
-          <QuestionInput
-            type={questions[currentQuestionIndex]?.type || 'text'}
-            options={questions[currentQuestionIndex]?.options}
-            onSubmit={handleSubmit}
-            isActive={!isComplete}
-          />
-        )}
-        {isComplete && (
-          <div className="text-center p-4">
-            <p className="text-green-400 mb-2">Thank you for your responses!</p>
-            <button
-              onClick={resetForm}
-              className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition-colors duration-200"
-            >
-              Start Over
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 
