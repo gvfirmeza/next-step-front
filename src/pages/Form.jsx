@@ -220,7 +220,7 @@ const ChatForm = ({ questions, onComplete }) => {
       <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-            <img src="public/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
+            <img src="/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
           </div>
           <span className="font-semibold text-xl">NextStep</span>
         </div>
@@ -327,7 +327,7 @@ export default function App() {
       <header className="fixed w-full z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
       <div className="flex items-center">
           <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-              <img src="public/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
+              <img src="/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
           </div>
           <span className="font-semibold text-xl">NextStep</span>
       </div>
