@@ -11,7 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/form" element={<Form />} />
-        <Route path="/tep" element={<CareerLayout mockCareerData={mockCareerData} />} />
+        <Route path="/mentorship" element={<CareerLayout mockCareerData={mockCareerData} />} />
       </Routes>
     </BrowserRouter>
   );
