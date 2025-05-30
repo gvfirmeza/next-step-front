@@ -60,7 +60,7 @@ const ParticlesBackground = () => {
     // Criar partículas
     const createParticles = () => {
       particlesRef.current = [];
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 10; i++) {
         particlesRef.current.push(new Particle());
       }
     };
@@ -78,29 +78,10 @@ const ParticlesBackground = () => {
             ctx.beginPath();
             ctx.moveTo(particlesRef.current[i].x, particlesRef.current[i].y);
             ctx.lineTo(particlesRef.current[j].x, particlesRef.current[j].y);
-            ctx.strokeStyle = `#ed4575`;
+            ctx.strokeStyle = `rgb(237, 69, 117, 0.3)`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }
-        }
-      }
-    };
-
-    // Desenhar conexões com o mouse
-    const drawMouseConnections = () => {
-      for (let particle of particlesRef.current) {
-        const dx = particle.x - mouseRef.current.x;
-        const dy = particle.y - mouseRef.current.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < 100) {
-          const opacity = (100 - distance) / 100 * 0.6;
-          ctx.beginPath();
-          ctx.moveTo(particle.x, particle.y);
-          ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
-
-          ctx.lineWidth = 2;
-          ctx.stroke();
         }
       }
     };
@@ -128,19 +109,7 @@ const ParticlesBackground = () => {
       mouseRef.current.y = e.clientY - rect.top;
     };
 
-    const handleClick = (e) => {
-      // Adicionar partículas no clique
-      for (let i = 0; i < 3; i++) {
-        const particle = new Particle();
-        const rect = canvas.getBoundingClientRect();
-        particle.x = e.clientX - rect.left + (Math.random() - 0.5) * 50;
-        particle.y = e.clientY - rect.top + (Math.random() - 0.5) * 50;
-        particlesRef.current.push(particle);
-      }
-    };
-
     canvas.addEventListener('mousemove', handleMouseMove);
-    canvas.addEventListener('click', handleClick);
 
     // Inicializar
     createParticles();
@@ -150,7 +119,6 @@ const ParticlesBackground = () => {
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       canvas.removeEventListener('mousemove', handleMouseMove);
-      canvas.removeEventListener('click', handleClick);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -183,7 +151,7 @@ const LandingPage = () => {
                     <span className="font-semibold text-xl">NextStep</span>
                 </div>
                 <button
-                    className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+                    className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-[#d13965]"
                     onClick={handleNavigation}
                 >
                     Comece Já
@@ -221,15 +189,14 @@ const LandingPage = () => {
                                 tendências de mercado e propõe reflexões sobre sua carreira.
                             </p>
                             <div className="flex gap-4">
-                                <button className="bg-[#ED4575] px-5 py-2 rounded-md font-medium transition-colors" onClick={handleNavigation}>
+                                <button className="bg-[#ED4575] px-5 py-2 rounded-md font-medium transition-colors hover:bg-[#d13965]" onClick={handleNavigation}>
                                     Comece Já
                                 </button>
-                                <a className="border border-gray-700 hover:border-gray-600  px-5 py-2 rounded-md font-medium transition-colors" href='#info'>
+                                <a className="border border-gray-700 hover:border-gray-600 hover:bg-gray-800 px-5 py-2 rounded-md font-medium transition-colors" href='#info'>
                                     Saiba Mais
                                 </a>
                             </div>
                         </div>
-
                         <div className="md:w-1/2 flex justify-center">
                             <img src="/assets/illustration.png" alt="Chat Illustration" className='-mr-12 -mb-4' />
                         </div>
@@ -485,9 +452,9 @@ const LandingPage = () => {
                         <div className="col-span-1">
                             <h4 className="font-semibold mb-4 text-lg">Contato</h4>
                             <ul className="space-y-2">
-                                <li className="text-[#9facaf]">contato@nextstep.com</li>
-                                <li className="text-[#9facaf]">(11) 9999-9999</li>
-                                <li className="text-[#9facaf]">São Paulo, Brasil</li>
+                                <li className="text-[#9facaf] hover:text-white transition-colors">contato@nextstep.com</li>
+                                <li className="text-[#9facaf] hover:text-white transition-colors">(11) 9999-9999</li>
+                                <li className="text-[#9facaf] hover:text-white transition-colors">São Paulo, Brasil</li>
                             </ul>
                         </div>
 

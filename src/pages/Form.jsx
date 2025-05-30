@@ -12,8 +12,9 @@ const Message = ({ text, isUser, options, animationDelay = 0 }) => {
     return () => clearTimeout(timer);
   }, [animationDelay]);
 
-  const userMessageClasses = "ml-auto bg-pink-500 text-white";
-  const systemMessageClasses = "mr-auto bg-gray-700 text-white";
+  // Cores atualizadas das mensagens do chat
+  const userMessageClasses = "ml-auto bg-gradient-to-r from-[#ED4575] to-[#d13965] text-white";
+  const systemMessageClasses = "mr-auto bg-gradient-to-r from-gray-700 to-gray-800 text-white";
 
   return (
     <div
@@ -26,13 +27,13 @@ const Message = ({ text, isUser, options, animationDelay = 0 }) => {
     >
       <div
         className={`
-          rounded-xl px-4 py-3 max-w-xs shadow-md
+          rounded-xl px-4 py-3 max-w-xs md:max-w-sm shadow-lg
           ${isUser ? userMessageClasses : systemMessageClasses}
         `}
       >
-        <p>{text}</p>
+        <p className="text-sm md:text-base">{text}</p>
         {options && !isUser && (
-          <div className="text-sm opacity-70 mt-2">
+          <div className="text-xs opacity-70 mt-2">
             <p>Options: {options.map(opt => opt.label).join(', ')}</p>
           </div>
         )}
@@ -78,15 +79,15 @@ const QuestionInput = ({ type, options = [], onSubmit, isActive }) => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="flex-grow bg-gray-800 text-white rounded-md px-4 py-2 outline-none border border-gray-600 focus:border-pink-500"
-          placeholder="Type your answer..."
+          className="flex-grow bg-gray-800 text-white rounded-md px-4 py-2 outline-none border border-gray-600 focus:border-[#ED4575] transition-all duration-200"
+          placeholder="Digite sua resposta..."
           autoFocus
         />
         <button
           onClick={handleTextSubmit}
-          className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition-colors duration-200"
+          className="bg-gradient-to-r from-[#ED4575] to-[#d13965] text-white px-4 py-2 rounded-md hover:from-[#d13965] hover:to-[#c02e58] transition-all duration-200 shadow-md"
         >
-          Send
+          Enviar
         </button>
       </div>
     );
@@ -98,10 +99,10 @@ const QuestionInput = ({ type, options = [], onSubmit, isActive }) => {
         <select
           value={selectValue}
           onChange={handleSelectSubmit}
-          className="w-full bg-gray-800 text-white rounded-md px-4 py-3 outline-none border border-gray-600 focus:border-pink-500 cursor-pointer"
+          className="w-full bg-gray-800 text-white rounded-md px-4 py-3 outline-none border border-gray-600 focus:border-[#ED4575] cursor-pointer transition-all duration-200"
         >
           <option value="" disabled>
-            Select an option...
+            Selecione uma opção...
           </option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -122,8 +123,10 @@ const ChatForm = ({ questions, onComplete }) => {
   const [responses, setResponses] = useState({});
   const [messages, setMessages] = useState([]);
   const [isComplete, setIsComplete] = useState(false);
+  const [chatHeight, setChatHeight] = useState(300);
 
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const navigate = useNavigate();
 
   // Display the first question when the component mounts
@@ -142,10 +145,16 @@ const ChatForm = ({ questions, onComplete }) => {
     }
   }, [questions]);
 
-  // Scroll to the bottom when messages change
+  // Scroll to the bottom when messages change and adjust height
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Aumentar a altura do chat conforme as mensagens são adicionadas
+    if (messages.length > 3 && chatContainerRef.current) {
+      const newHeight = Math.min(600, 400 + (messages.length - 3) * 50);
+      setChatHeight(newHeight);
     }
   }, [messages]);
 
@@ -203,6 +212,7 @@ const ChatForm = ({ questions, onComplete }) => {
     setCurrentQuestionIndex(0);
     setResponses({});
     setIsComplete(false);
+    setChatHeight(400); // Reset chat height
     setMessages([
       {
         id: `question-${questions[0].id}`,
@@ -215,66 +225,48 @@ const ChatForm = ({ questions, onComplete }) => {
   };
 
   return (
-
-    <>
-      <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
-        <div className="flex items-center">
-          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-            <img src="/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
-          </div>
-          <span className="font-semibold text-xl">NextStep</span>
-        </div>
-        <button
-          className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-          onClick={() => navigate('/')}
-        >
-          Voltar
-        </button>
-      </header>
-
-      <div className="flex flex-col h-full bg-gray-900 text-white rounded-lg overflow-hidden">
-        <div className="p-4 border-b border-gray-700">
-          <h2 className="text-xl font-medium">Chat Form</h2>
-        </div>
-
-        <div className="flex-grow p-4 overflow-y-auto">
-          <div className="flex flex-col space-y-2">
-            {messages.map((message, index) => (
-              <Message
-                key={message.id}
-                text={message.text}
-                isUser={message.isUser}
-                options={message.options}
-                animationDelay={200 * index}
-              />
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
-
-        <div className="p-4 border-t border-gray-700">
-          {!isComplete && currentQuestionIndex < questions.length && (
-            <QuestionInput
-              type={questions[currentQuestionIndex]?.type || 'text'}
-              options={questions[currentQuestionIndex]?.options}
-              onSubmit={handleSubmit}
-              isActive={!isComplete}
+    <div className="flex flex-col h-full bg-gradient-to-b from-[#1e1e24] to-[#262626] text-white rounded-lg overflow-hidden shadow-2xl border border-gray-700">
+      <div
+        ref={chatContainerRef}
+        className="flex-grow p-4 overflow-y-auto custom-scrollbar"
+        style={{ height: `${chatHeight}px`, transition: 'height 0.3s ease-in-out' }}
+      >
+        <div className="flex flex-col space-y-2">
+          {messages.map((message, index) => (
+            <Message
+              key={message.id}
+              text={message.text}
+              isUser={message.isUser}
+              options={message.options}
+              animationDelay={200 * index}
             />
-          )}
-          {isComplete && (
-            <div className="text-center p-4">
-              <p className="text-green-400 mb-2">Thank you for your responses!</p>
-              <button
-                onClick={resetForm}
-                className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition-colors duration-200"
-              >
-                Start Over
-              </button>
-            </div>
-          )}
+          ))}
+          <div ref={messagesEndRef} />
         </div>
       </div>
-    </>
+
+      <div className="p-4 border-t border-gray-700 bg-[#1a1a1f]">
+        {!isComplete && currentQuestionIndex < questions.length && (
+          <QuestionInput
+            type={questions[currentQuestionIndex]?.type || 'text'}
+            options={questions[currentQuestionIndex]?.options}
+            onSubmit={handleSubmit}
+            isActive={!isComplete}
+          />
+        )}
+        {isComplete && (
+          <div className="text-center p-4">
+            <p className="text-green-400 mb-2">Obrigado pelas suas respostas!</p>
+            <button
+              onClick={resetForm}
+              className="bg-gradient-to-r from-[#ED4575] to-[#d13965] text-white px-6 py-2 rounded-md hover:from-[#d13965] hover:to-[#c02e58] transition-all duration-200 shadow-md"
+            >
+              Recomeçar
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -283,70 +275,78 @@ export default function App() {
   const questions = [
     {
       id: 'name',
-      text: 'What is your name?',
+      text: 'Qual é o seu nome?',
       type: 'text',
     },
     {
       id: 'role',
-      text: 'What is your role?',
+      text: 'Qual é a sua função?',
       type: 'select',
       options: [
-        { value: 'developer', label: 'Developer' },
+        { value: 'developer', label: 'Desenvolvedor' },
         { value: 'designer', label: 'Designer' },
-        { value: 'manager', label: 'Manager' },
-        { value: 'other', label: 'Other' },
+        { value: 'manager', label: 'Gerente' },
+        { value: 'other', label: 'Outro' },
       ],
     },
     {
       id: 'experience',
-      text: 'How many years of experience do you have?',
+      text: 'Quantos anos de experiência você tem?',
       type: 'select',
       options: [
-        { value: '0-1', label: '0-1 years' },
-        { value: '2-5', label: '2-5 years' },
-        { value: '6-10', label: '6-10 years' },
-        { value: '10+', label: '10+ years' },
+        { value: '0-1', label: '0-1 anos' },
+        { value: '2-5', label: '2-5 anos' },
+        { value: '6-10', label: '6-10 anos' },
+        { value: '10+', label: '10+ anos' },
       ],
     },
     {
       id: 'feedback',
-      text: 'Any additional feedback?',
+      text: 'Algum feedback adicional?',
       type: 'text',
     },
   ];
 
   const handleFormComplete = (responses) => {
-    console.log('Form completed with responses:', responses);
-    alert(`Form completed! Check console for details.`);
+    console.log('Formulário completo com respostas:', responses);
+    alert(`Formulário completo! Verifique o console para detalhes.`);
   };
 
   const navigate = useNavigate();
 
   return (
     <>
-      <header className="fixed w-full z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
-      <div className="flex items-center">
-          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-              <img src="/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
-          </div>
-          <span className="font-semibold text-xl">NextStep</span>
+    <header className="fixed w-full z-10 flex justify-between items-center py-4 px-6 md:px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans shadow-md">
+    <div className="flex items-center">
+      <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
+        <img src="/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
       </div>
-      <button
-          className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-          onClick={() => navigate('/')}
-      >
-          Voltar
-      </button>
-      </header>
+      <span className="font-semibold text-xl">NextStep</span>
+    </div>
+    <button
+      className="bg-gradient-to-r from-[#ED4575] to-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 hover:from-[#d13965] hover:to-[#c02e58] shadow-md"
+      onClick={() => navigate('/')}
+    >
+      Voltar
+    </button>
+  </header>
 
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-md h-150 bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-gray-700">
+    <div className="min-h-screen bg-gradient-to-b from-[#121214] to-[#1e1e24] pt-16">
+
+    <div className="p-6 text-center">
+        <h2 className="text-4xl font-bold my-2">Vamos conversar sobre sua carreira</h2>
+        <p className="text-gray-300 text-md">Me conte um pouco sobre você para que eu possa te ajudar a encontrar seu caminho profissional ideal.</p>
+      </div>
+
+      <div className="container mx-auto flex items-center justify-center p-4 pt-8">
+        <div className="w-full max-w-2xl bg-transparent rounded-lg overflow-hidden">
           <ChatForm
             questions={questions}
             onComplete={handleFormComplete}
           />
         </div>
       </div>
+    </div>
     </>
   );
 }
