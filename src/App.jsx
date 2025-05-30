@@ -1,9 +1,7 @@
-import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Form from './pages/Form';
 import CareerLayout from './pages/CareerLayout';
-import mockCareerData from './data/mockCareerData';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
@@ -11,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/form" element={<Form />} />
-        <Route path="/mentorship" element={<CareerLayout mockCareerData={mockCareerData} />} />
+        <Route path="/tep" element={<CareerLayout />} />
       </Routes>
     </BrowserRouter>
   );
