@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Heart,
   ArrowRight,
@@ -9,7 +9,9 @@ import {
   GraduationCap,
   Laptop,
   BookOpen,
-  Star
+  Star,
+  ArrowLeft,
+  Home
 } from 'lucide-react';
 
 const CareerHeader = ({ title, introduction }) => (
@@ -108,7 +110,7 @@ const QuoteCard = ({ quote }) => (
       <p className="text-xl italic font-light mb-4">{quote.text}</p>
       <p className="text-right font-medium">— {quote.author}</p>
     </div>
-    <div className="gradient-bg" />
+    <div className="absolute inset-0 bg-gradient-to-br from-[#ED4575] to-[#c02e58] opacity-20" />
   </div>
 );
 
@@ -141,29 +143,155 @@ const Footer = () => (
   </footer>
 );
 
-const CareerLayout = ( { mockCareerData } ) => (
-  <div className="min-h-screen">
-    <header className="bg-[#1D1D1D]/50 backdrop-blur-sm border-b border-[#ED4575]/20">
-      <div className="container mx-auto px-4 py-4">
-        <h1 className="text-xl font-bold text-white">Mentor de Carreira IA</h1>
-      </div>
-    </header>
+const CareerLayout = () => {
+  const [careerData, setCareerData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-    <main className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <CareerHeader title={mockCareerData.title} introduction={mockCareerData.introduction} />
-        <RoadmapCard roadmap={mockCareerData.roadmap} />
-        <div className="grid md:grid-cols-2 gap-6">
-          <NextStepsCard nextSteps={mockCareerData.nextSteps} />
-          <SoftSkillsCard softSkills={mockCareerData.softSkills} />
+  useEffect(() => {
+    // Recuperar dados do sessionStorage
+    const storedData = sessionStorage.getItem('careerAnalysis');
+    
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        setCareerData(parsedData);
+        setError(false);
+      } catch (error) {
+        console.error('Erro ao parsear dados do career analysis:', error);
+        setError(true);
+      }
+    } else {
+      setError(true);
+    }
+    
+    setLoading(false);
+  }, []);
+
+  const handleGoHome = () => {
+    window.location.href = '/';
+  };
+
+  const handleNewAnalysis = () => {
+    sessionStorage.removeItem('careerAnalysis');
+    window.location.href = '/form';
+  };
+
+  const handleGoBack = () => {
+    window.location.href = '/form';
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#1D1D1D] via-[#2D1B3D] to-[#1D1D1D] flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ED4575] mx-auto mb-4"></div>
+          <p>Carregando sua análise...</p>
         </div>
-        <ChallengesCard challenges={mockCareerData.potentialChallenges} />
-        <QuoteCard quote={mockCareerData.inspirationalQuote} />
       </div>
-    </main>
+    );
+  }
 
-    <Footer />
-  </div>
-);
+  if (error || !careerData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#1D1D1D] via-[#2D1B3D] to-[#1D1D1D] flex items-center justify-center">
+        <div className="text-white text-center">
+          <h2 className="text-2xl font-bold mb-4">Oops! Dados não encontrados</h2>
+          <p className="text-gray-300 mb-6">
+            Não conseguimos encontrar os dados da sua análise de carreira.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <button 
+              onClick={handleGoHome}
+              className="flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-500 transition"
+            >
+              <Home size={20} />
+              Início
+            </button>
+            <button 
+              onClick={handleNewAnalysis}
+              className="flex items-center gap-2 bg-[#ED4575] text-white px-6 py-3 rounded-lg hover:bg-[#c02e58] transition"
+            >
+              <GraduationCap size={20} />
+              Nova Análise
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#1D1D1D] via-[#2D1B3D] to-[#1D1D1D]">
+      <header className="bg-[#1D1D1D]/50 backdrop-blur-sm border-b border-[#ED4575]/20">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold text-white">Mentor de Carreira IA</h1>
+            <div className="flex gap-4">
+              <button
+                onClick={handleGoBack}
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition duration-200"
+              >
+                <ArrowLeft size={20} />
+                <span className="hidden sm:inline">Voltar</span>
+              </button>
+              <button
+                onClick={handleGoHome}
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition duration-200"
+              >
+                <Home size={20} />
+                <span className="hidden sm:inline">Início</span>
+              </button>
+              <button
+                onClick={handleNewAnalysis}
+                className="bg-[#ED4575] text-white px-4 py-2 rounded-lg hover:bg-[#c02e58] transition duration-200"
+              >
+                Nova Análise
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <CareerHeader 
+            title={careerData.title || "Análise de Carreira"} 
+            introduction={careerData.introduction || "Sua análise personalizada está pronta!"} 
+          />
+          
+          {careerData.roadmap && careerData.roadmap.length > 0 && (
+            <RoadmapCard roadmap={careerData.roadmap} />
+          )}
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            {careerData.nextSteps && careerData.nextSteps.length > 0 && (
+              <NextStepsCard nextSteps={careerData.nextSteps} />
+            )}
+            
+            {careerData.softSkills && careerData.softSkills.length > 0 && (
+              <SoftSkillsCard softSkills={careerData.softSkills} />
+            )}
+          </div>
+          
+          {careerData.potentialChallenges && careerData.potentialChallenges.length > 0 && (
+            <ChallengesCard challenges={careerData.potentialChallenges} />
+          )}
+          
+          {careerData.inspirationalQuote && (
+            <QuoteCard 
+              quote={careerData.inspirationalQuote || { 
+                text: "Sucesso é a jornada, não o destino.", 
+                author: "Arthur Ashe" 
+              }} 
+            />
+          )}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
 
 export default CareerLayout;
