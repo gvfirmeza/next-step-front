@@ -320,14 +320,33 @@ export default function App() {
     alert(`Form completed! Check console for details.`);
   };
 
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md h-96 bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-gray-700">
-        <ChatForm
-          questions={questions}
-          onComplete={handleFormComplete}
-        />
+    <>
+      <header className="fixed w-full z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
+      <div className="flex items-center">
+          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
+              <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
+          </div>
+          <span className="font-semibold text-xl">NextStep</span>
       </div>
-    </div>
+      <button
+          className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+          onClick={() => navigate('/')}
+      >
+          Voltar
+      </button>
+      </header>
+
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md h-150 bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-gray-700">
+          <ChatForm
+            questions={questions}
+            onComplete={handleFormComplete}
+          />
+        </div>
+      </div>
+    </>
   );
 }
