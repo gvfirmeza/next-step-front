@@ -1,223 +1,313 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import React, { useEffect, useRef, useState } from 'react';
 
-function Form() {
-  const [answers, setAnswers] = useState({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [inputValue, setInputValue] = useState('');
-  const messagesEndRef = useRef(null);
-
-  const questions = [
-    {
-      id: 'curso',
-      text: 'Qual curso você está fazendo?',
-      type: 'text',
-      placeholder: 'Ex: Engenharia de Software, Administração...'
-    },
-    {
-      id: 'experiencia',
-      text: 'Qual seu nível de experiência profissional?',
-      type: 'select',
-      options: [
-        { value: 'estudante', label: 'Estudante sem experiência' },
-        { value: 'estagiario', label: 'Estagiário' },
-        { value: 'junior', label: 'Profissional Júnior (0-2 anos)' },
-        { value: 'pleno', label: 'Profissional Pleno (2-5 anos)' },
-        { value: 'senior', label: 'Profissional Sênior (5+ anos)' }
-      ]
-    }
-  ];
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const currentQuestion = questions[currentQuestionIndex];
-    if (inputValue.trim() !== '' || currentQuestion.type === 'select') {
-      setAnswers((prev) => ({
-        ...prev,
-        [currentQuestion.id]: inputValue
-      }));
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex((prev) => prev + 1);
-        setInputValue('');
-      }
-    }
-  };
+// Message Component
+const Message = ({ text, isUser, options, animationDelay = 0 }) => {
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const currentQuestion = questions[currentQuestionIndex];
-    if (currentQuestion?.type === 'select') {
-      setInputValue(currentQuestion.options[0].value);
-    }
-  }, [currentQuestionIndex]);
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, animationDelay);
+    return () => clearTimeout(timer);
+  }, [animationDelay]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [currentQuestionIndex, answers]);
+  const userMessageClasses = "ml-auto bg-pink-500 text-white";
+  const systemMessageClasses = "mr-auto bg-gray-700 text-white";
 
   return (
-    <div className="min-h-screen bg-[#19191c] flex flex-col">
-      <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
-        <div className="flex items-center">
-          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-            <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
-          </div>
-          <span className="font-semibold text-xl">NextStep</span>
-        </div>
-        <button className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors" onClick={() => window.history.back()}>
-          Voltar
-        </button>
-      </header>
-
-      <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full p-4 md:p-6">
-        <div className="text-center mb-8 mt-4">
-          <h1 className="text-3xl font-bold mb-2">Vamos conversar sobre sua carreira</h1>
-          <p className="text-[#9facaf] text-lg">
-            Me conte um pouco sobre você para que eu possa te ajudar a encontrar seu caminho profissional ideal.
-          </p>
-        </div>
-
-        <div className="flex-1 overflow-y-auto mb-4 space-y-6">
-          {questions.slice(0, currentQuestionIndex + 1).map((question, index) => {
-            const hasAnswer = index < currentQuestionIndex;
-            return (
-              <div key={question.id} className="space-y-4">
-                <div className="flex items-start">
-                  <div className="bg-[#ED4575] h-8 w-8 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
-                    <span className="text-white text-sm">NS</span>
-                  </div>
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-[#212124] rounded-2xl rounded-tl-none py-3 px-4 max-w-[80%]"
-                  >
-                    <p>{question.text}</p>
-                  </motion.div>
-                </div>
-
-                {hasAnswer && (
-                  <div className="flex items-start justify-end">
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="bg-[#ED4575] rounded-2xl rounded-tr-none py-3 px-4 max-w-[80%] text-white"
-                    >
-                      <p>
-                        {question.type === 'select'
-                          ? question.options.find((opt) => opt.value === answers[question.id])?.label || answers[question.id]
-                          : answers[question.id]}
-                      </p>
-                    </motion.div>
-                    <div className="bg-gray-300 h-8 w-8 rounded-full flex items-center justify-center ml-2 flex-shrink-0">
-                      <span className="text-gray-800 text-sm">EU</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {currentQuestionIndex < questions.length && (
-          <form onSubmit={handleSubmit} className="mt-auto">
-            <div className="relative">
-              {questions[currentQuestionIndex].type === 'text' ? (
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={questions[currentQuestionIndex].placeholder}
-                  className="w-full bg-[#212124] border border-[#303033] rounded-full py-3 px-4 pr-12 text-white focus:outline-none focus:border-[#ED4575]"
-                  autoFocus
-                />
-              ) : (
-                <div className="relative">
-                  <select
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    className="w-full bg-[#212124] border border-[#303033] rounded-full py-3 px-4 pr-12 text-white focus:outline-none focus:border-[#ED4575] appearance-none cursor-pointer"
-                    autoFocus
-                    style={{
-                      WebkitAppearance: 'none',
-                      MozAppearance: 'none',
-                      textIndent: 1,
-                      textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {questions[currentQuestionIndex].options.map((option) => (
-                      <option key={option.value} value={option.value} className="bg-[#19191c] text-white hover:bg-[#303033]">
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4">
-                    <svg className="fill-current h-4 w-4 text-[#ED4575]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-              )}
-              <button
-                type="submit"
-                className={twMerge(
-                  clsx(
-                    "absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#ED4575] text-white rounded-full w-8 h-8 flex items-center justify-center",
-                    {
-                      'opacity-50 cursor-not-allowed': inputValue.trim() === '' && questions[currentQuestionIndex].type === 'text',
-                      'hover:bg-[#d13d69] transition-colors': inputValue.trim() !== '' || questions[currentQuestionIndex].type === 'select'
-                    }
-                  )
-                )}
-                disabled={inputValue.trim() === '' && questions[currentQuestionIndex].type === 'text'}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          </form>
-        )}
-
-        {currentQuestionIndex >= questions.length && (
-          <div className="mt-6 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-[#212124] p-6 rounded-xl border border-[#303033] shadow-lg"
-            >
-              <div className="flex items-center justify-center mb-4">
-                <div className="bg-[#ED4575] h-12 w-12 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white text-lg">✓</span>
-                </div>
-                <h2 className="text-2xl font-bold">Obrigado pelas informações!</h2>
-              </div>
-              <p className="text-[#9facaf] mb-6">Agora posso te ajudar melhor em sua jornada profissional.</p>
-              <div className="bg-[#19191c] p-5 rounded-lg text-left overflow-auto max-h-60 border border-[#303033]">
-                <h3 className="text-lg font-semibold mb-3 text-[#ED4575]">Dados Salvos:</h3>
-                {Object.entries(answers).map(([key, value]) => {
-                  const question = questions.find((q) => q.id === key);
-                  const displayValue = question?.type === 'select'
-                    ? question.options.find((opt) => opt.value === value)?.label || value
-                    : value;
-                  return (
-                    <div key={key} className="mb-2 pb-2 border-b border-[#303033] last:border-0">
-                      <p className="text-[#9facaf] text-sm">{question?.text || key}:</p>
-                      <p className="text-white font-medium">{displayValue}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
+    <div
+      className={`
+        transition-all duration-300 ease-out transform
+        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+        ${isUser ? 'flex justify-end' : 'flex justify-start'}
+        mb-4
+      `}
+    >
+      <div
+        className={`
+          rounded-xl px-4 py-3 max-w-xs shadow-md
+          ${isUser ? userMessageClasses : systemMessageClasses}
+        `}
+      >
+        <p>{text}</p>
+        {options && !isUser && (
+          <div className="text-sm opacity-70 mt-2">
+            <p>Options: {options.map(opt => opt.label).join(', ')}</p>
           </div>
         )}
       </div>
     </div>
   );
-}
+};
 
-export default Form;
+// Question Input Component
+const QuestionInput = ({ type, options = [], onSubmit, isActive }) => {
+  const [inputValue, setInputValue] = useState('');
+  const [selectValue, setSelectValue] = useState('');
+
+  if (!isActive) return null;
+
+  const handleTextSubmit = () => {
+    if (inputValue.trim()) {
+      onSubmit(inputValue);
+      setInputValue('');
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleTextSubmit();
+    }
+  };
+
+  const handleSelectSubmit = (e) => {
+    const value = e.target.value;
+    setSelectValue(value);
+    if (value) {
+      onSubmit(value);
+      setSelectValue('');
+    }
+  };
+
+  if (type === 'text') {
+    return (
+      <div className="mt-4 flex gap-2">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={handleKeyPress}
+          className="flex-grow bg-gray-800 text-white rounded-md px-4 py-2 outline-none border border-gray-600 focus:border-pink-500"
+          placeholder="Type your answer..."
+          autoFocus
+        />
+        <button
+          onClick={handleTextSubmit}
+          className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition-colors duration-200"
+        >
+          Send
+        </button>
+      </div>
+    );
+  }
+
+  if (type === 'select') {
+    return (
+      <div className="mt-4">
+        <select
+          value={selectValue}
+          onChange={handleSelectSubmit}
+          className="w-full bg-gray-800 text-white rounded-md px-4 py-3 outline-none border border-gray-600 focus:border-pink-500 cursor-pointer"
+        >
+          <option value="" disabled>
+            Select an option...
+          </option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+// Main Chat Form Component
+const ChatForm = ({ questions, onComplete }) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [responses, setResponses] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [isComplete, setIsComplete] = useState(false);
+  
+  const messagesEndRef = useRef(null);
+
+  // Display the first question when the component mounts
+  useEffect(() => {
+    if (questions.length > 0) {
+      const firstQuestion = questions[0];
+      setMessages([
+        {
+          id: `question-${firstQuestion.id}`,
+          text: firstQuestion.text,
+          isUser: false,
+          questionType: firstQuestion.type,
+          options: firstQuestion.options,
+        },
+      ]);
+    }
+  }, [questions]);
+
+  // Scroll to the bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const handleSubmit = (response) => {
+    const currentQuestion = questions[currentQuestionIndex];
+    
+    // Add user response message
+    const responseText = currentQuestion.type === 'select' && currentQuestion.options
+      ? currentQuestion.options.find(opt => opt.value === response)?.label || response
+      : response;
+      
+    const userMessage = {
+      id: `response-${currentQuestion.id}`,
+      text: responseText,
+      isUser: true,
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    
+    // Update responses state
+    const updatedResponses = {
+      ...responses,
+      [currentQuestion.id]: response,
+    };
+    setResponses(updatedResponses);
+    
+    // Check if there's a next question
+    if (currentQuestionIndex < questions.length - 1) {
+      const nextIndex = currentQuestionIndex + 1;
+      const nextQuestion = questions[nextIndex];
+      
+      // Add a slight delay before showing the next question
+      setTimeout(() => {
+        const questionMessage = {
+          id: `question-${nextQuestion.id}`,
+          text: nextQuestion.text,
+          isUser: false,
+          questionType: nextQuestion.type,
+          options: nextQuestion.options,
+        };
+        
+        setMessages(prev => [...prev, questionMessage]);
+        setCurrentQuestionIndex(nextIndex);
+      }, 500);
+    } else {
+      // Form is complete
+      setIsComplete(true);
+      if (onComplete) {
+        onComplete(updatedResponses);
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setCurrentQuestionIndex(0);
+    setResponses({});
+    setIsComplete(false);
+    setMessages([
+      {
+        id: `question-${questions[0].id}`,
+        text: questions[0].text,
+        isUser: false,
+        questionType: questions[0].type,
+        options: questions[0].options,
+      },
+    ]);
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-gray-900 text-white rounded-lg overflow-hidden">
+      <div className="p-4 border-b border-gray-700">
+        <h2 className="text-xl font-medium">Chat Form</h2>
+      </div>
+      
+      <div className="flex-grow p-4 overflow-y-auto">
+        <div className="flex flex-col space-y-2">
+          {messages.map((message, index) => (
+            <Message
+              key={message.id}
+              text={message.text}
+              isUser={message.isUser}
+              options={message.options}
+              animationDelay={200 * index}
+            />
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+      
+      <div className="p-4 border-t border-gray-700">
+        {!isComplete && currentQuestionIndex < questions.length && (
+          <QuestionInput
+            type={questions[currentQuestionIndex]?.type || 'text'}
+            options={questions[currentQuestionIndex]?.options}
+            onSubmit={handleSubmit}
+            isActive={!isComplete}
+          />
+        )}
+        {isComplete && (
+          <div className="text-center p-4">
+            <p className="text-green-400 mb-2">Thank you for your responses!</p>
+            <button
+              onClick={resetForm}
+              className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition-colors duration-200"
+            >
+              Start Over
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Demo App Component
+export default function App() {
+  const questions = [
+    {
+      id: 'name',
+      text: 'What is your name?',
+      type: 'text',
+    },
+    {
+      id: 'role',
+      text: 'What is your role?',
+      type: 'select',
+      options: [
+        { value: 'developer', label: 'Developer' },
+        { value: 'designer', label: 'Designer' },
+        { value: 'manager', label: 'Manager' },
+        { value: 'other', label: 'Other' },
+      ],
+    },
+    {
+      id: 'experience',
+      text: 'How many years of experience do you have?',
+      type: 'select',
+      options: [
+        { value: '0-1', label: '0-1 years' },
+        { value: '2-5', label: '2-5 years' },
+        { value: '6-10', label: '6-10 years' },
+        { value: '10+', label: '10+ years' },
+      ],
+    },
+    {
+      id: 'feedback',
+      text: 'Any additional feedback?',
+      type: 'text',
+    },
+  ];
+
+  const handleFormComplete = (responses) => {
+    console.log('Form completed with responses:', responses);
+    alert(`Form completed! Check console for details.`);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md h-96 bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-gray-700">
+        <ChatForm 
+          questions={questions} 
+          onComplete={handleFormComplete} 
+        />
+      </div>
+    </div>
+  );
+}
