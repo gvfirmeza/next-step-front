@@ -1,8 +1,12 @@
 import React from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+
+    const navigate = useNavigate();
+
     return (
         <>
             <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
@@ -12,7 +16,10 @@ const LandingPage = () => {
                     </div>
                     <span className="font-semibold text-xl">NextStep</span>
                 </div>
-                <button className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors">
+                <button
+                    className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+                    onClick={() => navigate('/form')}
+                >
                     Comece Já
                 </button>
             </header>
@@ -48,12 +55,12 @@ const LandingPage = () => {
                                 tendências de mercado e propõe reflexões sobre sua carreira.
                             </p>
                             <div className="flex gap-4">
-                                <button className="bg-[#ED4575] px-5 py-2 rounded-md font-medium transition-colors">
+                                <button className="bg-[#ED4575] px-5 py-2 rounded-md font-medium transition-colors" onClick={() => navigate('/form')}>
                                     Comece Já
                                 </button>
-                                <button className="border border-gray-700 hover:border-gray-600  px-5 py-2 rounded-md font-medium transition-colors">
+                                <a className="border border-gray-700 hover:border-gray-600  px-5 py-2 rounded-md font-medium transition-colors" href='#info'>
                                     Saiba Mais
-                                </button>
+                                </a>
                             </div>
                         </div>
 
@@ -68,7 +75,7 @@ const LandingPage = () => {
             <img src="src/assets/brain-waves-new.svg" alt="AI Brain Transition" className="w-full absolute left-0 z-10" style={{ height: '180px', marginTop: '-90px' }} />
 
             {/* Features Section */}
-            <section className="relative py-20 px-6 bg-[#19191c] min-h-[100vh] flex items-center justify-center">
+            <section className="relative py-20 px-6 bg-[#19191c] min-h-[100vh] flex items-center justify-center" id='info'>
                 <div className="container mx-auto max-w-5xl">
                     <div className="text-center mb-16 flex flex-col justify-center items-center">
                         <h2 className="text-6xl font-bold mb-12 max-w-3xl leading-20">Como o NextStep transforma sua trajetória</h2>
@@ -237,15 +244,15 @@ const LandingPage = () => {
                         transition={{ duration: 0.5, delay: 0.7 }}
                         viewport={{ once: true }}
                     >
-                        <button className="bg-[#ED4575] text-white px-8 py-3 rounded-md font-medium transition-colors hover:bg-[#d13965] text-lg">
+                        <button className="bg-[#ED4575] text-white px-8 py-3 rounded-md font-medium transition-colors hover:bg-[#d13965] text-lg" onClick={() => navigate('/form')} >
                             Comece Agora
                         </button>
-                    </motion.div>
-                </div>
-            </section>
+                </motion.div>
+            </div>
+        </section >
 
-            {/* Footer */}
-            <footer className="bg-[#19191c] text-white py-12 px-6 border-t border-[#303033]">
+            {/* Footer */ }
+            < footer className = "bg-[#19191c] text-white py-12 px-6 border-t border-[#303033]" >
                 <div className="container mx-auto max-w-5xl">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         {/* Logo e Descrição */}
@@ -314,7 +321,7 @@ const LandingPage = () => {
                         <p>© {new Date().getFullYear()} NextStep. Todos os direitos reservados.</p>
                     </div>
                 </div>
-            </footer>
+            </footer >
         </>
     );
 };

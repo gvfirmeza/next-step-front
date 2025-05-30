@@ -2,5 +2,6 @@
 
 html {
   background-color: #19191c;
+  scroll-behavior: smooth;
   @apply font-sans text-[#e4e4e7]; 
 }
