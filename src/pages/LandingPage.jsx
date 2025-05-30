@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ParticlesBackground = () => {
   const canvasRef = useRef(null);
