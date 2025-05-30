@@ -313,6 +313,7 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate2 = useNavigate();
 
   const questions = [
     {
@@ -399,7 +400,7 @@ export default function App() {
 
   const handleFormComplete = async (responses) => {
     console.log("Formulário completo com respostas:", responses);
-
+    
     setIsLoading(true);
 
     // Montar os dados baseados nas respostas do formulário
@@ -446,7 +447,7 @@ export default function App() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         // Redirecionar para /tep
-        window.location.href = "/tep";
+        navigate2("/tep");
       } else {
         throw new Error("Resposta da API não contém dados válidos");
       }
@@ -457,7 +458,7 @@ export default function App() {
       const storedData = sessionStorage.getItem("careerAnalysis");
       if (storedData) {
         console.log("Dados foram salvos, redirecionando...");
-        window.location.href = "/tep";
+        navigate2("/tep");
       } else {
         alert("Erro ao processar sua solicitação. Tente novamente.");
         setIsLoading(false);
