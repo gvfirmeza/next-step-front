@@ -1,20 +1,20 @@
-  import React, { useEffect, useRef, useState } from 'react';
-  import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-  // Message Component
-  const Message = ({ text, isUser, options, animationDelay = 0 }) => {
-    const [isVisible, setIsVisible] = useState(false);
+// Message Component
+const Message = ({ text, isUser, options, animationDelay = 0 }) => {
+  const [isVisible, setIsVisible] = useState(false);
 
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, animationDelay);
-      return () => clearTimeout(timer);
-    }, [animationDelay]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, animationDelay);
+    return () => clearTimeout(timer);
+  }, [animationDelay]);
 
-    // Cores atualizadas das mensagens do chat
-    const userMessageClasses = "ml-auto bg-gradient-to-r from-[#ED4575] to-[#d13965] text-white";
-    const systemMessageClasses = "mr-auto bg-gradient-to-r from-gray-700 to-gray-800 text-white";
+  // Cores atualizadas das mensagens do chat
+  const userMessageClasses = "ml-auto bg-gradient-to-r from-[#ED4575] to-[#d13965] text-white";
+  const systemMessageClasses = "mr-auto bg-gradient-to-r from-gray-700 to-gray-800 text-white";
 
     return (
       <div

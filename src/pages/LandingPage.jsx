@@ -198,7 +198,7 @@ const LandingPage = () => {
                             </div>
                         </div>
                         <div className="md:w-1/2 flex justify-center">
-                            <img src="/assets/illustration.png" alt="Chat Illustration" className='-mr-12 -mb-4' />
+                            <img src="/assets/illustration.png" alt="Chat Illustration" className='-mr-12 -mb-4 hidden md:block lg:block' />
                         </div>
                     </main>
                 </div>
@@ -454,7 +454,7 @@ const LandingPage = () => {
                             <ul className="space-y-2">
                                 <li className="text-[#9facaf] hover:text-white transition-colors">contato@nextstep.com</li>
                                 <li className="text-[#9facaf] hover:text-white transition-colors">(11) 9999-9999</li>
-                                <li className="text-[#9facaf] hover:text-white transition-colors">São Paulo, Brasil</li>
+                                <li className="text-[#9facaf] hover:text-white transition-colors">Rio de Janeiro, Brasil</li>
                             </ul>
                         </div>
 
