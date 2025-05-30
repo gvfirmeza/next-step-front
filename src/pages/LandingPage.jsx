@@ -1,11 +1,178 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
+
+const ParticlesBackground = () => {
+  const canvasRef = useRef(null);
+  const particlesRef = useRef([]);
+  const mouseRef = useRef({ x: 0, y: 0 });
+  const animationRef = useRef();
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    // Ajustar o canvas para o tamanho da tela
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Classe para as partículas
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.size = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.8 + 0.2;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Reposicionar partículas que saem da tela
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `#ed4575`;
+        ctx.fill();
+        
+        // Borda branca
+        ctx.strokeStyle = `#ed4575`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Criar partículas
+    const createParticles = () => {
+      particlesRef.current = [];
+      for (let i = 0; i < 15; i++) {
+        particlesRef.current.push(new Particle());
+      }
+    };
+
+    // Desenhar linhas conectando partículas próximas
+    const drawConnections = () => {
+      for (let i = 0; i < particlesRef.current.length; i++) {
+        for (let j = i + 1; j < particlesRef.current.length; j++) {
+          const dx = particlesRef.current[i].x - particlesRef.current[j].x;
+          const dy = particlesRef.current[i].y - particlesRef.current[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 150) {
+            const opacity = (150 - distance) / 150 * 0.4;
+            ctx.beginPath();
+            ctx.moveTo(particlesRef.current[i].x, particlesRef.current[i].y);
+            ctx.lineTo(particlesRef.current[j].x, particlesRef.current[j].y);
+            ctx.strokeStyle = `#ed4575`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+    };
+
+    // Desenhar conexões com o mouse
+    const drawMouseConnections = () => {
+      for (let particle of particlesRef.current) {
+        const dx = particle.x - mouseRef.current.x;
+        const dy = particle.y - mouseRef.current.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 100) {
+          const opacity = (100 - distance) / 100 * 0.6;
+          ctx.beginPath();
+          ctx.moveTo(particle.x, particle.y);
+          ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
+      
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+    };
+
+    // Loop de animação
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Atualizar e desenhar partículas
+      for (let particle of particlesRef.current) {
+        particle.update();
+        particle.draw();
+      }
+      
+      // Desenhar conexões
+      drawConnections();
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    // Event listeners
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current.x = e.clientX - rect.left;
+      mouseRef.current.y = e.clientY - rect.top;
+    };
+
+    const handleClick = (e) => {
+      // Adicionar partículas no clique
+      for (let i = 0; i < 3; i++) {
+        const particle = new Particle();
+        const rect = canvas.getBoundingClientRect();
+        particle.x = e.clientX - rect.left + (Math.random() - 0.5) * 50;
+        particle.y = e.clientY - rect.top + (Math.random() - 0.5) * 50;
+        particlesRef.current.push(particle);
+      }
+    };
+
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('click', handleClick);
+
+    // Inicializar
+    createParticles();
+    animate();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('click', handleClick);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-auto"
+      style={{ zIndex: 1 }}
+    />
+  );
+};
 
 const LandingPage = () => {
-
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
+    
+    const handleNavigation = () => {
+        // navigate('/form'); // Para usar com React Router
+        console.log('Navegando para formulário');
+    };
 
     return (
         <>
@@ -18,7 +185,7 @@ const LandingPage = () => {
                 </div>
                 <button
                     className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-                    onClick={() => navigate('/form')}
+                    onClick={handleNavigation}
                 >
                     Comece Já
                 </button>
@@ -55,7 +222,7 @@ const LandingPage = () => {
                                 tendências de mercado e propõe reflexões sobre sua carreira.
                             </p>
                             <div className="flex gap-4">
-                                <button className="bg-[#ED4575] px-5 py-2 rounded-md font-medium transition-colors" onClick={() => navigate('/form')}>
+                                <button className="bg-[#ED4575] px-5 py-2 rounded-md font-medium transition-colors" onClick={handleNavigation}>
                                     Comece Já
                                 </button>
                                 <a className="border border-gray-700 hover:border-gray-600  px-5 py-2 rounded-md font-medium transition-colors" href='#info'>
@@ -75,8 +242,27 @@ const LandingPage = () => {
             <img src="src/assets/brain-waves-new.svg" alt="AI Brain Transition" className="w-full absolute left-0 z-10" style={{ height: '180px', marginTop: '-90px' }} />
 
             {/* Features Section */}
-            <section className="relative py-20 px-6 bg-[#19191c] min-h-[100vh] flex items-center justify-center" id='info'>
-                <div className="container mx-auto max-w-5xl">
+            <section className="relative py-20 px-6 bg-[#19191c] min-h-[100vh] flex items-center justify-center overflow-hidden" id='info'>
+                {/* Efeito de partículas */}
+                <ParticlesBackground />
+                
+                {/* Efeito de estrelas animadas */}
+                <div className="absolute inset-0 opacity-30">
+                    <div 
+                        className="absolute inset-0 bg-repeat animate-pulse"
+                        style={{
+                            backgroundImage: `radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+                                            radial-gradient(2px 2px at 40px 20px, #fff, transparent),
+                                            radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                                            radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                                            radial-gradient(2px 2px at 160px 30px, #fff, transparent)`,
+                            backgroundSize: '200px 100px',
+                            animation: 'twinkle 4s ease-in-out infinite alternate'
+                        }}
+                    />
+                </div>
+                
+                <div className="container mx-auto max-w-5xl relative z-10">
                     <div className="text-center mb-16 flex flex-col justify-center items-center">
                         <h2 className="text-6xl font-bold mb-12 max-w-3xl leading-20">Como o NextStep transforma sua trajetória</h2>
                         <p className="text-[#9facaf] text-xl max-w-2xl mx-auto">
@@ -155,7 +341,24 @@ const LandingPage = () => {
                             </p>
                         </motion.div>
                     </div>
+                    
+                    {/* Instrução interativa */}
+                    <motion.div 
+                        className="mt-12 text-center"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1, duration: 0.8 }}
+                    >
+                    </motion.div>
                 </div>
+                
+                <style jsx>{`
+                    @keyframes twinkle {
+                        0% { opacity: 0.3; }
+                        50% { opacity: 0.8; }
+                        100% { opacity: 0.3; }
+                    }
+                `}</style>
             </section>
 
             {/* Wave Transition */}
@@ -244,15 +447,15 @@ const LandingPage = () => {
                         transition={{ duration: 0.5, delay: 0.7 }}
                         viewport={{ once: true }}
                     >
-                        <button className="bg-[#ED4575] text-white px-8 py-3 rounded-md font-medium transition-colors hover:bg-[#d13965] text-lg" onClick={() => navigate('/form')} >
+                        <button className="bg-[#ED4575] text-white px-8 py-3 rounded-md font-medium transition-colors hover:bg-[#d13965] text-lg" onClick={handleNavigation}>
                             Comece Agora
                         </button>
-                </motion.div>
-            </div>
-        </section >
+                    </motion.div>
+                </div>
+            </section>
 
-            {/* Footer */ }
-            < footer className = "bg-[#19191c] text-white py-12 px-6 border-t border-[#303033]" >
+            {/* Footer */}
+            <footer className="bg-[#19191c] text-white py-12 px-6 border-t border-[#303033]">
                 <div className="container mx-auto max-w-5xl">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         {/* Logo e Descrição */}
@@ -321,7 +524,7 @@ const LandingPage = () => {
                         <p>© {new Date().getFullYear()} NextStep. Todos os direitos reservados.</p>
                     </div>
                 </div>
-            </footer >
+            </footer>
         </>
     );
 };
