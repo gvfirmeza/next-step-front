@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Message Component
 const Message = ({ text, isUser, options, animationDelay = 0 }) => {
@@ -463,6 +464,8 @@ export default function App() {
       }
     }
   };
+
+  const navigate = useNavigate();
 
   return (
     <>
