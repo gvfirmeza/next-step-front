@@ -15,28 +15,45 @@ const Message = ({ text, isUser, options, animationDelay = 0 }) => {
   const systemMessageClasses = "mr-auto bg-gray-700 text-white";
 
   return (
-    <div
-      className={`
+    <>
+      <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
+        <div className="flex items-center">
+          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
+            <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
+          </div>
+          <span className="font-semibold text-xl">NextStep</span>
+        </div>
+        <button
+          className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+          onClick={() => navigate('/')}
+        >
+          Voltar
+        </button>
+      </header>
+
+      <div
+        className={`
         transition-all duration-300 ease-out transform
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
         ${isUser ? 'flex justify-end' : 'flex justify-start'}
         mb-4
       `}
-    >
-      <div
-        className={`
+      >
+        <div
+          className={`
           rounded-xl px-4 py-3 max-w-xs shadow-md
           ${isUser ? userMessageClasses : systemMessageClasses}
         `}
-      >
-        <p>{text}</p>
-        {options && !isUser && (
-          <div className="text-sm opacity-70 mt-2">
-            <p>Options: {options.map(opt => opt.label).join(', ')}</p>
-          </div>
-        )}
+        >
+          <p>{text}</p>
+          {options && !isUser && (
+            <div className="text-sm opacity-70 mt-2">
+              <p>Options: {options.map(opt => opt.label).join(', ')}</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -121,7 +138,7 @@ const ChatForm = ({ questions, onComplete }) => {
   const [responses, setResponses] = useState({});
   const [messages, setMessages] = useState([]);
   const [isComplete, setIsComplete] = useState(false);
-  
+
   const messagesEndRef = useRef(null);
 
   // Display the first question when the component mounts
@@ -149,32 +166,32 @@ const ChatForm = ({ questions, onComplete }) => {
 
   const handleSubmit = (response) => {
     const currentQuestion = questions[currentQuestionIndex];
-    
+
     // Add user response message
     const responseText = currentQuestion.type === 'select' && currentQuestion.options
       ? currentQuestion.options.find(opt => opt.value === response)?.label || response
       : response;
-      
+
     const userMessage = {
       id: `response-${currentQuestion.id}`,
       text: responseText,
       isUser: true,
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
-    
+
     // Update responses state
     const updatedResponses = {
       ...responses,
       [currentQuestion.id]: response,
     };
     setResponses(updatedResponses);
-    
+
     // Check if there's a next question
     if (currentQuestionIndex < questions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       const nextQuestion = questions[nextIndex];
-      
+
       // Add a slight delay before showing the next question
       setTimeout(() => {
         const questionMessage = {
@@ -184,7 +201,7 @@ const ChatForm = ({ questions, onComplete }) => {
           questionType: nextQuestion.type,
           options: nextQuestion.options,
         };
-        
+
         setMessages(prev => [...prev, questionMessage]);
         setCurrentQuestionIndex(nextIndex);
       }, 500);
@@ -217,7 +234,7 @@ const ChatForm = ({ questions, onComplete }) => {
       <div className="p-4 border-b border-gray-700">
         <h2 className="text-xl font-medium">Chat Form</h2>
       </div>
-      
+
       <div className="flex-grow p-4 overflow-y-auto">
         <div className="flex flex-col space-y-2">
           {messages.map((message, index) => (
@@ -232,7 +249,7 @@ const ChatForm = ({ questions, onComplete }) => {
           <div ref={messagesEndRef} />
         </div>
       </div>
-      
+
       <div className="p-4 border-t border-gray-700">
         {!isComplete && currentQuestionIndex < questions.length && (
           <QuestionInput
@@ -303,9 +320,9 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md h-96 bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-gray-700">
-        <ChatForm 
-          questions={questions} 
-          onComplete={handleFormComplete} 
+        <ChatForm
+          questions={questions}
+          onComplete={handleFormComplete}
         />
       </div>
     </div>
