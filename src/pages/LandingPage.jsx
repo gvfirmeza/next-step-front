@@ -12,13 +12,13 @@ const ParticlesBackground = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    
+
     // Ajustar o canvas para o tamanho da tela
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
-    
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
@@ -49,7 +49,7 @@ const ParticlesBackground = () => {
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fillStyle = `#ed4575`;
         ctx.fill();
-        
+
         // Borda branca
         ctx.strokeStyle = `#ed4575`;
         ctx.lineWidth = 1;
@@ -98,7 +98,7 @@ const ParticlesBackground = () => {
           ctx.beginPath();
           ctx.moveTo(particle.x, particle.y);
           ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
-      
+
           ctx.lineWidth = 2;
           ctx.stroke();
         }
@@ -108,16 +108,16 @@ const ParticlesBackground = () => {
     // Loop de animação
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       // Atualizar e desenhar partículas
       for (let particle of particlesRef.current) {
         particle.update();
         particle.draw();
       }
-      
+
       // Desenhar conexões
       drawConnections();
-      
+
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -167,11 +167,10 @@ const ParticlesBackground = () => {
 };
 
 const LandingPage = () => {
-    // const navigate = useNavigate();
-    
+    const navigate = useNavigate();
+
     const handleNavigation = () => {
-        // navigate('/form'); // Para usar com React Router
-        console.log('Navegando para formulário');
+        navigate('/form');
     };
 
     return (
@@ -245,10 +244,10 @@ const LandingPage = () => {
             <section className="relative py-20 px-6 bg-[#19191c] min-h-[100vh] flex items-center justify-center overflow-hidden" id='info'>
                 {/* Efeito de partículas */}
                 <ParticlesBackground />
-                
+
                 {/* Efeito de estrelas animadas */}
                 <div className="absolute inset-0 opacity-30">
-                    <div 
+                    <div
                         className="absolute inset-0 bg-repeat animate-pulse"
                         style={{
                             backgroundImage: `radial-gradient(2px 2px at 20px 30px, #fff, transparent),
@@ -261,7 +260,7 @@ const LandingPage = () => {
                         }}
                     />
                 </div>
-                
+
                 <div className="container mx-auto max-w-5xl relative z-10">
                     <div className="text-center mb-16 flex flex-col justify-center items-center">
                         <h2 className="text-6xl font-bold mb-12 max-w-3xl leading-20">Como o NextStep transforma sua trajetória</h2>
@@ -341,9 +340,9 @@ const LandingPage = () => {
                             </p>
                         </motion.div>
                     </div>
-                    
+
                     {/* Instrução interativa */}
-                    <motion.div 
+                    <motion.div
                         className="mt-12 text-center"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -351,7 +350,7 @@ const LandingPage = () => {
                     >
                     </motion.div>
                 </div>
-                
+
                 <style jsx>{`
                     @keyframes twinkle {
                         0% { opacity: 0.3; }
