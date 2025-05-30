@@ -178,7 +178,7 @@ const LandingPage = () => {
             <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
                 <div className="flex items-center">
                     <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-                        <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
+                        <img src="public/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
                     </div>
                     <span className="font-semibold text-xl">NextStep</span>
                 </div>
@@ -231,14 +231,14 @@ const LandingPage = () => {
                         </div>
 
                         <div className="md:w-1/2 flex justify-center">
-                            <img src="src/assets/illustration.png" alt="Chat Illustration" className='-mr-12 -mb-4' />
+                            <img src="public/assets/illustration.png" alt="Chat Illustration" className='-mr-12 -mb-4' />
                         </div>
                     </main>
                 </div>
             </section>
 
             {/* Brain AI Transition */}
-            <img src="src/assets/brain-waves-new.svg" alt="AI Brain Transition" className="w-full absolute left-0 z-10" style={{ height: '180px', marginTop: '-90px' }} />
+            <img src="public/assets/brain-waves-new.svg" alt="AI Brain Transition" className="w-full absolute left-0 z-10" style={{ height: '180px', marginTop: '-90px' }} />
 
             {/* Features Section */}
             <section className="relative py-20 px-6 bg-[#19191c] min-h-[100vh] flex items-center justify-center overflow-hidden" id='info'>
@@ -282,7 +282,7 @@ const LandingPage = () => {
                         >
                             <div className="flex justify-center mb-4">
                                 <motion.img
-                                    src="src\assets\data-analysis.png"
+                                    src="public\assets\data-analysis.png"
                                     alt="Análise de Perfil"
                                     className="h-12 w-12"
                                     whileHover={{ rotate: 10 }}
@@ -305,7 +305,7 @@ const LandingPage = () => {
                         >
                             <div className="flex justify-center mb-4">
                                 <motion.img
-                                    src="src/assets/trend.png"
+                                    src="public/assets/trend.png"
                                     alt="Tendências de Mercado"
                                     className="h-12 w-12"
                                     whileHover={{ rotate: 10 }}
@@ -328,7 +328,7 @@ const LandingPage = () => {
                         >
                             <div className="flex justify-center mb-4">
                                 <motion.img
-                                    src="src/assets/otherside.png"
+                                    src="public/assets/otherside.png"
                                     alt="Reflexões Guiadas"
                                     className="h-12 w-12"
                                     whileHover={{ rotate: 10 }}
@@ -362,7 +362,7 @@ const LandingPage = () => {
 
             {/* Wave Transition */}
             <div className="w-full overflow-hidden relative">
-                <img src="src/assets/wave-white.svg" alt="Wave Transition" className="w-full" />
+                <img src="public/assets/wave-white.svg" alt="Wave Transition" className="w-full" />
             </div>
 
             {/* Process Section */}
@@ -461,7 +461,7 @@ const LandingPage = () => {
                         <div className="col-span-1 md:col-span-1">
                             <div className="flex items-center mb-4">
                                 <div className="h-8 w-8 rounded-md flex items-center justify-center mr-2">
-                                    <img src="src/assets/logo.png" alt="Logo" className="w-7" />
+                                    <img src="public/assets/logo.png" alt="Logo" className="w-7" />
                                 </div>
                                 <span className="font-semibold text-lg">NextStep</span>
                             </div>
@@ -497,22 +497,22 @@ const LandingPage = () => {
                             <div className="flex space-x-4">
                                 <a href="#" className="text-[#9facaf] hover:text-white transition-colors">
                                     <svg width="24" height="24" className="fill-current">
-                                        <use xlinkHref="src/assets/social-icons.svg#facebook"></use>
+                                        <use xlinkHref="public/assets/social-icons.svg#facebook"></use>
                                     </svg>
                                 </a>
                                 <a href="#" className="text-[#9facaf] hover:text-white transition-colors">
                                     <svg width="24" height="24" className="fill-current">
-                                        <use xlinkHref="src/assets/social-icons.svg#twitter"></use>
+                                        <use xlinkHref="public/assets/social-icons.svg#twitter"></use>
                                     </svg>
                                 </a>
                                 <a href="#" className="text-[#9facaf] hover:text-white transition-colors">
                                     <svg width="24" height="24" className="fill-current">
-                                        <use xlinkHref="src/assets/social-icons.svg#instagram"></use>
+                                        <use xlinkHref="public/assets/social-icons.svg#instagram"></use>
                                     </svg>
                                 </a>
                                 <a href="#" className="text-[#9facaf] hover:text-white transition-colors">
                                     <svg width="24" height="24" className="fill-current">
-                                        <use xlinkHref="src/assets/social-icons.svg#linkedin"></use>
+                                        <use xlinkHref="public/assets/social-icons.svg#linkedin"></use>
                                     </svg>
                                 </a>
                             </div>
