@@ -121,6 +121,28 @@ const QuestionInput = ({
     );
   }
 
+  if (type === "number") {
+  return (
+    <div className="mt-4 flex gap-2">
+      <input
+        type="number"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyPress={handleKeyPress}
+        className="flex-grow bg-gray-800 text-white rounded-md px-4 py-2 outline-none border border-gray-600 focus:border-[`#ED4575`] transition-all duration-200"
+        placeholder={placeholder || "Digite um número..."}
+        autoFocus
+      />
+      <button
+        onClick={handleTextSubmit}
+        className="bg-gradient-to-r from-[#ED4575] to-[#d13965] text-white px-4 py-2 rounded-md hover:from-[#d13965] hover:to-[#c02e58] transition-all duration-200 shadow-md"
+      >
+        Enviar
+      </button>
+    </div>
+  );
+}
+
   return null;
 };
 
@@ -130,10 +152,8 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
   const [responses, setResponses] = useState({});
   const [messages, setMessages] = useState([]);
   const [isComplete, setIsComplete] = useState(false);
-  const [chatHeight, setChatHeight] = useState(300);
 
   const messagesEndRef = useRef(null);
-  const chatContainerRef = useRef(null);
 
   // Display the first question when the component mounts
   useEffect(() => {
@@ -151,16 +171,10 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
     }
   }, [questions]);
 
-  // Scroll to the bottom when messages change and adjust height
+  // Scroll to the bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-
-    // Aumentar a altura do chat conforme as mensagens são adicionadas
-    if (messages.length > 3 && chatContainerRef.current) {
-      const newHeight = Math.min(600, 400 + (messages.length - 3) * 50);
-      setChatHeight(newHeight);
     }
   }, [messages]);
 
@@ -171,7 +185,7 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
     const responseText =
       currentQuestion.type === "select" && currentQuestion.options
         ? currentQuestion.options.find((opt) => opt.value === response)
-            ?.label || response
+          ?.label || response
         : response;
 
     const userMessage = {
@@ -220,7 +234,6 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
     setCurrentQuestionIndex(0);
     setResponses({});
     setIsComplete(false);
-    setChatHeight(400); // Reset chat height
     if (questions.length > 0) {
       setMessages([
         {
@@ -235,15 +248,10 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-b from-[#1e1e24] to-[#262626] text-white rounded-lg overflow-hidden shadow-2xl border border-gray-700 z-10">
-      <div
-        ref={chatContainerRef}
-        className="flex-grow p-4 overflow-y-auto custom-scrollbar"
-        style={{
-          height: `${chatHeight}px`,
-          transition: "height 0.3s ease-in-out",
-        }}
-      >
+    <div className="w-full bg-gradient-to-b from-[#1e1e24] to-[#262626] text-white rounded-lg shadow-2xl border border-gray-700">
+      {/* Container das mensagens - sem altura fixa */}
+      {!isComplete && (
+      <div className="p-4 min-h-[200px]">
         <div className="flex flex-col space-y-2">
           {messages.map((message, index) => (
             <Message
@@ -257,8 +265,10 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
           <div ref={messagesEndRef} />
         </div>
       </div>
+      )}
 
-      <div className="p-4 border-t border-gray-700 bg-[#1a1a1f]">
+      {/* Input fixo na parte inferior */}
+      <div className="p-4 border-t border-gray-700 bg-[#1a1a1f] rounded-b-lg">
         {!isComplete && currentQuestionIndex < questions.length && (
           <QuestionInput
             type={questions[currentQuestionIndex]?.type || "text"}
@@ -277,7 +287,7 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
                   Analisando suas respostas...
                 </p>
                 <p className="text-sm text-gray-400">
-                  Criando sua análise personalizada
+                  A IA está gerando sua análise personalizada
                 </p>
               </div>
             ) : (
@@ -300,7 +310,6 @@ const ChatForm = ({ questions, onComplete, isFormLoading }) => {
   );
 };
 
-// Demo App Component
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -319,59 +328,37 @@ export default function App() {
     {
       id: "idade",
       text: "Qual é a sua idade?",
-      type: "select",
-      options: [
-        { value: 18, label: "18 anos" },
-        { value: 19, label: "19 anos" },
-        { value: 20, label: "20 anos" },
-        { value: 21, label: "21 anos" },
-        { value: 22, label: "22 anos" },
-        { value: 23, label: "23 anos" },
-        { value: 24, label: "24 anos" },
-        { value: 25, label: "25 anos" },
-        { value: 26, label: "26 anos" },
-        { value: 27, label: "27 anos" },
-        { value: 28, label: "28 anos" },
-        { value: 29, label: "29 anos" },
-        { value: 30, label: "30+ anos" },
-      ],
+      type: "number",
+      placeholder: "Digite sua idade",
+      min: 16,
+      max: 100,
     },
     {
       id: "area_graduacao",
       text: "Qual é a sua área de graduação?",
       type: "select",
       options: [
-        { value: "Ciência da Computação", label: "Ciência da Computação" },
-        { value: "Engenharia de Software", label: "Engenharia de Software" },
-        { value: "Sistemas de Informação", label: "Sistemas de Informação" },
-        {
-          value: "Análise e Desenvolvimento de Sistemas",
-          label: "Análise e Desenvolvimento de Sistemas",
-        },
-        { value: "Design", label: "Design" },
-        { value: "Design Gráfico", label: "Design Gráfico" },
-        {
-          value: "Publicidade e Propaganda",
-          label: "Publicidade e Propaganda",
-        },
-        { value: "Marketing", label: "Marketing" },
         { value: "Administração", label: "Administração" },
-        { value: "Engenharia", label: "Engenharia" },
-        { value: "Outro", label: "Outro" },
+        { value: "Análise e Desenvolvimento de Sistemas", label: "Análise e Desenvolvimento de Sistemas" },
+        { value: "Arquitetura e Urbanismo", label: "Arquitetura e Urbanismo" },
+        { value: "Ciência de Dados e Inteligência Artificial", label: "Ciência de Dados e Inteligência Artificial" },
+        { value: "Ciências Contábeis", label: "Ciências Contábeis" },
+        { value: "Ciências Econômicas", label: "Ciências Econômicas" },
+        { value: "Publicidade e Propaganda", label: "Publicidade e Propaganda" },
+        { value: "Direito", label: "Direito" },
+        { value: "Engenharia Civil", label: "Engenharia Civil" },
+        { value: "Engenharia da Computação", label: "Engenharia da Computação" },
+        { value: "Engenharia da Produção", label: "Engenharia da Produção" },
+        { value: "Engenharia de Software", label: "Engenharia de Software" },
+        { value: "Engenharia Mecânica", label: "Engenharia Mecânica" },
+        { value: "Relações Internacionais", label: "Relações Internacionais" },
       ],
     },
     {
       id: "ano_conclusao",
       text: "Qual é o ano previsto para conclusão da graduação?",
-      type: "select",
-      options: [
-        { value: 2024, label: "2024" },
-        { value: 2025, label: "2025" },
-        { value: 2026, label: "2026" },
-        { value: 2027, label: "2027" },
-        { value: 2028, label: "2028" },
-        { value: 2029, label: "2029" },
-      ],
+      type: "number",
+      placeholder: "Digite o ano (ex: 2025)"
     },
     {
       id: "interesses",
@@ -479,7 +466,6 @@ export default function App() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-[#121214] to-[#1e1e24] pt-16">
       <header className="fixed w-full z-10 flex justify-between items-center py-4 px-6 md:px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans shadow-md">
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
@@ -494,6 +480,22 @@ export default function App() {
           Voltar
         </button>
       </header>
+
+            <div className="absolute inset-0 w-full h-full">
+        <div 
+          className="absolute -top-5 left-0 w-full h-[60vh] opacity-80"
+          style={{
+            background: `radial-gradient(ellipse 120% 80% at 50% 0%, 
+              rgba(103, 27, 49, 0.8) 0%, 
+              rgba(103, 27, 49, 0.4) 30%, 
+              rgba(26, 17, 22, 0.3) 50%, 
+              rgba(18, 18, 20, 0.1) 75%, 
+              transparent 100%)`
+          }}
+        />
+      </div>
+
+      <div className="min-h-screen pt-16 z-6 relative">
         <div className="p-6 text-center">
           <h2 className="text-4xl font-bold my-2">
             Vamos conversar sobre sua carreira
@@ -505,7 +507,7 @@ export default function App() {
         </div>
 
         <div className="container mx-auto flex items-center justify-center p-4 pt-8">
-          <div className="w-full max-w-2xl bg-transparent rounded-lg overflow-hidden">
+          <div className="w-full max-w-4xl bg-transparent rounded-lg overflow-hidden">
             <ChatForm
               questions={questions}
               onComplete={handleFormComplete}

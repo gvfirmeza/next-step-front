@@ -89,8 +89,7 @@ const SoftSkillsCard = ({ softSkills }) => (
           key={index}
           className="flex items-center px-3 py-2 bg-[#ED4575]/20 text-[#E4E4E7] rounded-full"
         >
-          <Heart size={16} className="mr-1" />
-          <span>{skill}</span>
+          <span className="text-center">{skill}</span>
         </div>
       ))}
     </div>
@@ -162,7 +161,7 @@ const CareerLayout = () => {
   };
 
   const handleGoBack = () => {
-    window.location.href = "/form";
+    window.location.href = "/";
   };
 
   if (loading) {
@@ -208,8 +207,8 @@ const CareerLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1D1D1D] via-[#2D1B3D] to-[#1D1D1D]">
 
+    <>
       <header className="fixed w-full z-20 flex justify-between items-center py-4 px-6 md:px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans shadow-md">
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
@@ -219,175 +218,178 @@ const CareerLayout = () => {
         </div>
         <button
           className="bg-gradient-to-r from-[#ED4575] to-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 hover:from-[#d13965] hover:to-[#c02e58] shadow-md"
-          onClick={() => navigate("/")}
+          onClick={() => handleGoBack()}
         >
           Voltar
         </button>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <CareerHeader
-            title={careerData.title || "Análise de Carreira"}
-            introduction={
-              careerData.introduction ||
-              "Sua análise personalizada está pronta!"
-            }
-          />
+      <div className="min-h-screen bg-gradient-to-br">
 
-          {careerData.roadmap && careerData.roadmap.length > 0 && (
-            <RoadmapCard roadmap={careerData.roadmap} />
-          )}
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {careerData.nextSteps && careerData.nextSteps.length > 0 && (
-              <NextStepsCard nextSteps={careerData.nextSteps} />
-            )}
-
-            {careerData.softSkills && careerData.softSkills.length > 0 && (
-              <SoftSkillsCard softSkills={careerData.softSkills} />
-            )}
-          </div>
-
-          {careerData.potentialChallenges &&
-            careerData.potentialChallenges.length > 0 && (
-              <ChallengesCard challenges={careerData.potentialChallenges} />
-            )}
-
-          {careerData.inspirationalQuote && (
-            <QuoteCard
-              quote={
-                careerData.inspirationalQuote || {
-                  text: "Sucesso é a jornada, não o destino.",
-                  author: "Arthur Ashe",
-                }
+        <main className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto pt-20">
+            <CareerHeader
+              title={careerData.title || "Análise de Carreira"}
+              introduction={
+                careerData.introduction ||
+                "Sua análise personalizada está pronta!"
               }
             />
-          )}
-        </div>
-      </main>
 
-      <footer className="bg-[#19191c] text-white py-12 px-6 border-t border-[#303033]">
-        <div className="container mx-auto max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Logo e Descrição */}
-            <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center mb-4">
-                <div className="h-8 w-8 rounded-md flex items-center justify-center mr-2">
-                  <img src="/assets/logo.png" alt="Logo" className="w-7" />
+            {careerData.roadmap && careerData.roadmap.length > 0 && (
+              <RoadmapCard roadmap={careerData.roadmap} />
+            )}
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {careerData.nextSteps && careerData.nextSteps.length > 0 && (
+                <NextStepsCard nextSteps={careerData.nextSteps} />
+              )}
+
+              {careerData.softSkills && careerData.softSkills.length > 0 && (
+                <SoftSkillsCard softSkills={careerData.softSkills} />
+              )}
+            </div>
+
+            {careerData.potentialChallenges &&
+              careerData.potentialChallenges.length > 0 && (
+                <ChallengesCard challenges={careerData.potentialChallenges} />
+              )}
+
+            {careerData.inspirationalQuote && (
+              <QuoteCard
+                quote={
+                  careerData.inspirationalQuote || {
+                    text: "Sucesso é a jornada, não o destino.",
+                    author: "Arthur Ashe",
+                  }
+                }
+              />
+            )}
+          </div>
+        </main>
+
+        <footer className="bg-[#19191c] text-white py-12 px-6 border-t border-[#303033]">
+          <div className="container mx-auto max-w-5xl">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {/* Logo e Descrição */}
+              <div className="col-span-1 md:col-span-1">
+                <div className="flex items-center mb-4">
+                  <div className="h-8 w-8 rounded-md flex items-center justify-center mr-2">
+                    <img src="/assets/logo.png" alt="Logo" className="w-7" />
+                  </div>
+                  <span className="font-semibold text-lg">NextStep</span>
                 </div>
-                <span className="font-semibold text-lg">NextStep</span>
+                <p className="text-[#9facaf] text-sm">
+                  Transformando carreiras com inteligência artificial e orientação
+                  personalizada.
+                </p>
               </div>
-              <p className="text-[#9facaf] text-sm">
-                Transformando carreiras com inteligência artificial e orientação
-                personalizada.
+
+              {/* Links Rápidos */}
+              <div className="col-span-1">
+                <h4 className="font-semibold mb-4 text-lg">Links Rápidos</h4>
+                <ul className="space-y-2">
+                  <li>
+                    <a
+                      href="#"
+                      className="text-[#9facaf] hover:text-white transition-colors"
+                    >
+                      Início
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="text-[#9facaf] hover:text-white transition-colors"
+                    >
+                      Sobre Nós
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="text-[#9facaf] hover:text-white transition-colors"
+                    >
+                      Recursos
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="text-[#9facaf] hover:text-white transition-colors"
+                    >
+                      Blog
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Contato */}
+              <div className="col-span-1">
+                <h4 className="font-semibold mb-4 text-lg">Contato</h4>
+                <ul className="space-y-2">
+                  <li className="text-[#9facaf] hover:text-white transition-colors">
+                    contato@nextstep.com
+                  </li>
+                  <li className="text-[#9facaf] hover:text-white transition-colors">
+                    (11) 9999-9999
+                  </li>
+                  <li className="text-[#9facaf] hover:text-white transition-colors">
+                    Rio de Janeiro, Brasil
+                  </li>
+                </ul>
+              </div>
+
+              {/* Redes Sociais */}
+              <div className="col-span-1">
+                <h4 className="font-semibold mb-4 text-lg">Siga-nos</h4>
+                <div className="flex space-x-4">
+                  <a
+                    href="#"
+                    className="text-[#9facaf] hover:text-white transition-colors"
+                  >
+                    <svg width="24" height="24" className="fill-current">
+                      <use xlinkHref="/assets/social-icons.svg#facebook"></use>
+                    </svg>
+                  </a>
+                  <a
+                    href="#"
+                    className="text-[#9facaf] hover:text-white transition-colors"
+                  >
+                    <svg width="24" height="24" className="fill-current">
+                      <use xlinkHref="/assets/social-icons.svg#twitter"></use>
+                    </svg>
+                  </a>
+                  <a
+                    href="#"
+                    className="text-[#9facaf] hover:text-white transition-colors"
+                  >
+                    <svg width="24" height="24" className="fill-current">
+                      <use xlinkHref="/assets/social-icons.svg#instagram"></use>
+                    </svg>
+                  </a>
+                  <a
+                    href="#"
+                    className="text-[#9facaf] hover:text-white transition-colors"
+                  >
+                    <svg width="24" height="24" className="fill-current">
+                      <use xlinkHref="/assets/social-icons.svg#linkedin"></use>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-[#303033] text-center text-[#9facaf] text-sm">
+              <p>
+                © {new Date().getFullYear()} NextStep. Todos os direitos
+                reservados.
               </p>
             </div>
-
-            {/* Links Rápidos */}
-            <div className="col-span-1">
-              <h4 className="font-semibold mb-4 text-lg">Links Rápidos</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-[#9facaf] hover:text-white transition-colors"
-                  >
-                    Início
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-[#9facaf] hover:text-white transition-colors"
-                  >
-                    Sobre Nós
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-[#9facaf] hover:text-white transition-colors"
-                  >
-                    Recursos
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-[#9facaf] hover:text-white transition-colors"
-                  >
-                    Blog
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Contato */}
-            <div className="col-span-1">
-              <h4 className="font-semibold mb-4 text-lg">Contato</h4>
-              <ul className="space-y-2">
-                <li className="text-[#9facaf] hover:text-white transition-colors">
-                  contato@nextstep.com
-                </li>
-                <li className="text-[#9facaf] hover:text-white transition-colors">
-                  (11) 9999-9999
-                </li>
-                <li className="text-[#9facaf] hover:text-white transition-colors">
-                  Rio de Janeiro, Brasil
-                </li>
-              </ul>
-            </div>
-
-            {/* Redes Sociais */}
-            <div className="col-span-1">
-              <h4 className="font-semibold mb-4 text-lg">Siga-nos</h4>
-              <div className="flex space-x-4">
-                <a
-                  href="#"
-                  className="text-[#9facaf] hover:text-white transition-colors"
-                >
-                  <svg width="24" height="24" className="fill-current">
-                    <use xlinkHref="/assets/social-icons.svg#facebook"></use>
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  className="text-[#9facaf] hover:text-white transition-colors"
-                >
-                  <svg width="24" height="24" className="fill-current">
-                    <use xlinkHref="/assets/social-icons.svg#twitter"></use>
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  className="text-[#9facaf] hover:text-white transition-colors"
-                >
-                  <svg width="24" height="24" className="fill-current">
-                    <use xlinkHref="/assets/social-icons.svg#instagram"></use>
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  className="text-[#9facaf] hover:text-white transition-colors"
-                >
-                  <svg width="24" height="24" className="fill-current">
-                    <use xlinkHref="/assets/social-icons.svg#linkedin"></use>
-                  </svg>
-                </a>
-              </div>
-            </div>
           </div>
-
-          <div className="mt-8 pt-8 border-t border-[#303033] text-center text-[#9facaf] text-sm">
-            <p>
-              © {new Date().getFullYear()} NextStep. Todos os direitos
-              reservados.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </>
   );
 };
 
