@@ -4,19 +4,11 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 function Form() {
-  // Estado para armazenar as respostas do usuário
   const [answers, setAnswers] = useState({});
-  
-  // Estado para controlar qual pergunta está sendo exibida
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  
-  // Estado para armazenar o valor atual do input
   const [inputValue, setInputValue] = useState('');
-  
-  // Referência para o container de mensagens para scroll automático
   const messagesEndRef = useRef(null);
 
-  // Array de perguntas (facilmente expansível)
   const questions = [
     {
       id: 'curso',
@@ -38,52 +30,47 @@ function Form() {
     }
   ];
 
-  // Função para lidar com o envio de resposta
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Obtém a pergunta atual
     const currentQuestion = questions[currentQuestionIndex];
-    
-    // Verifica se há um valor para salvar
     if (inputValue.trim() !== '' || currentQuestion.type === 'select') {
-      // Atualiza o estado de respostas
-      setAnswers(prev => ({
+      setAnswers((prev) => ({
         ...prev,
         [currentQuestion.id]: inputValue
       }));
-      
-      // Avança para a próxima pergunta
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(prev => prev + 1);
-        setInputValue(''); // Limpa o input para a próxima pergunta
+        setCurrentQuestionIndex((prev) => prev + 1);
+        setInputValue('');
       }
     }
   };
 
-  // Efeito para rolar para a última mensagem quando uma nova é adicionada
+  useEffect(() => {
+    const currentQuestion = questions[currentQuestionIndex];
+    if (currentQuestion?.type === 'select') {
+      setInputValue(currentQuestion.options[0].value);
+    }
+  }, [currentQuestionIndex]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentQuestionIndex, answers]);
 
   return (
     <div className="min-h-screen bg-[#19191c] flex flex-col">
-      {/* Header */}
       <header className="relative z-10 flex justify-between items-center py-4 px-16 bg-[#19191c] border-b border-[#303033] text-white font-sans">
-                <div className="flex items-center">
-                    <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
-                        <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
-                    </div>
-                    <span className="font-semibold text-xl">NextStep</span>
-                </div>
-                <button className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors" onClick={() => window.history.back()} >
-                    Voltar
-                </button>
-            </header>
+        <div className="flex items-center">
+          <div className="h-10 w-10 rounded-md flex items-center justify-center mr-2">
+            <img src="src/assets/logo.png" alt="Logo" className="w-9 -mr-3" />
+          </div>
+          <span className="font-semibold text-xl">NextStep</span>
+        </div>
+        <button className="bg-[#ED4575] text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors" onClick={() => window.history.back()}>
+          Voltar
+        </button>
+      </header>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full p-4 md:p-6">
-        {/* Title Section */}
         <div className="text-center mb-8 mt-4">
           <h1 className="text-3xl font-bold mb-2">Vamos conversar sobre sua carreira</h1>
           <p className="text-[#9facaf] text-lg">
@@ -91,19 +78,16 @@ function Form() {
           </p>
         </div>
 
-        {/* Chat Container */}
         <div className="flex-1 overflow-y-auto mb-4 space-y-6">
-          {/* Renderiza as perguntas e respostas anteriores */}
           {questions.slice(0, currentQuestionIndex + 1).map((question, index) => {
             const hasAnswer = index < currentQuestionIndex;
             return (
               <div key={question.id} className="space-y-4">
-                {/* Pergunta (mensagem do sistema) */}
                 <div className="flex items-start">
                   <div className="bg-[#ED4575] h-8 w-8 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
                     <span className="text-white text-sm">NS</span>
                   </div>
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
@@ -113,18 +97,17 @@ function Form() {
                   </motion.div>
                 </div>
 
-                {/* Resposta do usuário (se já respondida) */}
                 {hasAnswer && (
                   <div className="flex items-start justify-end">
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
                       className="bg-[#ED4575] rounded-2xl rounded-tr-none py-3 px-4 max-w-[80%] text-white"
                     >
                       <p>
-                        {question.type === 'select' 
-                          ? question.options.find(opt => opt.value === answers[question.id])?.label || answers[question.id]
+                        {question.type === 'select'
+                          ? question.options.find((opt) => opt.value === answers[question.id])?.label || answers[question.id]
                           : answers[question.id]}
                       </p>
                     </motion.div>
@@ -139,7 +122,6 @@ function Form() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Form */}
         {currentQuestionIndex < questions.length && (
           <form onSubmit={handleSubmit} className="mt-auto">
             <div className="relative">
@@ -155,7 +137,7 @@ function Form() {
               ) : (
                 <div className="relative">
                   <select
-                    value={inputValue || questions[currentQuestionIndex].options[0].value}
+                    value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     className="w-full bg-[#212124] border border-[#303033] rounded-full py-3 px-4 pr-12 text-white focus:outline-none focus:border-[#ED4575] appearance-none cursor-pointer"
                     autoFocus
@@ -166,12 +148,8 @@ function Form() {
                       textOverflow: 'ellipsis'
                     }}
                   >
-                    {questions[currentQuestionIndex].options.map(option => (
-                      <option 
-                        key={option.value} 
-                        value={option.value} 
-                        className="bg-[#19191c] text-white hover:bg-[#303033]"
-                      >
+                    {questions[currentQuestionIndex].options.map((option) => (
+                      <option key={option.value} value={option.value} className="bg-[#19191c] text-white hover:bg-[#303033]">
                         {option.label}
                       </option>
                     ))}
@@ -183,15 +161,17 @@ function Form() {
                   </div>
                 </div>
               )}
-              <button 
-                type="submit" 
-                className={twMerge(clsx(
-                  "absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#ED4575] text-white rounded-full w-8 h-8 flex items-center justify-center",
-                  {
-                    "opacity-50 cursor-not-allowed": inputValue.trim() === '' && questions[currentQuestionIndex].type === 'text',
-                    "hover:bg-[#d13d69] transition-colors": inputValue.trim() !== '' || questions[currentQuestionIndex].type === 'select'
-                  }
-                ))}
+              <button
+                type="submit"
+                className={twMerge(
+                  clsx(
+                    "absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#ED4575] text-white rounded-full w-8 h-8 flex items-center justify-center",
+                    {
+                      'opacity-50 cursor-not-allowed': inputValue.trim() === '' && questions[currentQuestionIndex].type === 'text',
+                      'hover:bg-[#d13d69] transition-colors': inputValue.trim() !== '' || questions[currentQuestionIndex].type === 'select'
+                    }
+                  )
+                )}
                 disabled={inputValue.trim() === '' && questions[currentQuestionIndex].type === 'text'}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -202,10 +182,9 @@ function Form() {
           </form>
         )}
 
-        {/* Mensagem de conclusão */}
         {currentQuestionIndex >= questions.length && (
           <div className="mt-6 text-center">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -218,15 +197,13 @@ function Form() {
                 <h2 className="text-2xl font-bold">Obrigado pelas informações!</h2>
               </div>
               <p className="text-[#9facaf] mb-6">Agora posso te ajudar melhor em sua jornada profissional.</p>
-              
               <div className="bg-[#19191c] p-5 rounded-lg text-left overflow-auto max-h-60 border border-[#303033]">
                 <h3 className="text-lg font-semibold mb-3 text-[#ED4575]">Dados Salvos:</h3>
                 {Object.entries(answers).map(([key, value]) => {
-                  const question = questions.find(q => q.id === key);
-                  const displayValue = question?.type === 'select' 
-                    ? question.options.find(opt => opt.value === value)?.label || value
+                  const question = questions.find((q) => q.id === key);
+                  const displayValue = question?.type === 'select'
+                    ? question.options.find((opt) => opt.value === value)?.label || value
                     : value;
-                  
                   return (
                     <div key={key} className="mb-2 pb-2 border-b border-[#303033] last:border-0">
                       <p className="text-[#9facaf] text-sm">{question?.text || key}:</p>
